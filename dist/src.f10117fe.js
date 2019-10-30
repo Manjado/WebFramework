@@ -1933,17 +1933,20 @@ function () {
     Object.assign(this.data, update);
   };
 
+  Attributes.prototype.getAll = function () {
+    return this.data;
+  };
+
   return Attributes;
 }();
 
-exports.Attributes = Attributes;
-var attrs = new Attributes({
-  id: 5,
-  age: 20,
-  name: 'mike'
-});
-var name = attrs.get('name');
-var id = attrs.get('id');
+exports.Attributes = Attributes; // const attrs = new Attributes<UserProps>({
+//   id: 5,
+//   age: 20,
+//   name: 'mike'
+// });
+// const name = attrs.get('name');
+// const id = attrs.get('id');
 },{}],"src/models/User.ts":[function(require,module,exports) {
 "use strict";
 
@@ -1989,6 +1992,36 @@ function () {
     enumerable: true,
     configurable: true
   });
+
+  User.prototype.set = function (update) {
+    this.attributes.set(update);
+    this.events.trigger('change');
+  };
+
+  User.prototype.fetch = function () {
+    var _this = this;
+
+    var id = this.get('id');
+
+    if (typeof id !== 'number') {
+      throw new Error('Cannot fetch without an id');
+    }
+
+    this.sync.fetch(id).then(function (response) {
+      _this.set(response.data);
+    });
+  };
+
+  User.prototype.save = function () {
+    var _this = this;
+
+    this.sync.save(this.attributes.getAll()).then(function (response) {
+      _this.trigger('save');
+    }).catch(function () {
+      _this.trigger('error');
+    });
+  };
+
   return User;
 }();
 
@@ -2003,12 +2036,14 @@ Object.defineProperty(exports, "__esModule", {
 var User_1 = require("./models/User");
 
 var user = new User_1.User({
-  id: 1
+  id: 1,
+  name: 'mike',
+  age: 25
 });
-user.on('change', function () {
-  console.log('user was changed ');
+user.on('save', function () {
+  console.log(user);
 });
-user.trigger('change');
+user.save();
 },{"./models/User":"src/models/User.ts"}],"../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -2037,7 +2072,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54053" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55832" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
