@@ -27,17 +27,13 @@ export class Model<T extends HasId> {
     private sync: Sync<T>
   ) {}
 
-  get on() {
-    return this.events.on;
-  }
+  // get on() {
+  //   return this.events.on;
+  // }
 
-  get trigger() {
-    return this.events.trigger;
-  }
-
-  get get() {
-    return this.attributes.get;
-  }
+  on = this.events.on; //  this notation can only be used if it is not present in the constructor
+  trigger = this.events.trigger;
+  get = this.attributes.get;
 
   set(update: T): void {
     this.attributes.set(update);
